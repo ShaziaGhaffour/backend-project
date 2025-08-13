@@ -3,8 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
+// ✅ Import images
+import image28 from '../assets/image 28.svg';
+import image29 from '../assets/image 29.svg';
+
 export default function Registration() {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -24,15 +29,17 @@ export default function Registration() {
 
   const handleSubmit = async () => {
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Password not match!")
+      toast.error("Password does not match!");
+      return;
     }
+
     try {
       const response = await axios.post("http://localhost:2000/api/users/signup", formData);
-      toast(response?.data?.message);
-      navigate("/login")
+      toast.success(response?.data?.message || "Registration successful!");
+      navigate("/login");
     } catch (error) {
-      console.log(error);
-      toast.error(error.message || "Something went wrong.please try again later")
+      console.error(error);
+      toast.error(error.response?.data?.message || "Something went wrong. Please try again later.");
     }
   };
 
@@ -119,6 +126,7 @@ export default function Registration() {
                   required
                 />
               </div>
+
               <div className="pt-4">
                 <button
                   type="button"
@@ -129,22 +137,24 @@ export default function Registration() {
                 </button>
               </div>
             </div>
+
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
-                Already Have An Account?{' '}
+                Already have an account?{' '}
                 <Link to="/login" className="text-green-600 hover:text-green-700 font-medium">
-                  Click Here To Login
+                  Click here to login
                 </Link>
               </p>
             </div>
-            <div className="mt-6 flex space-x-3">
-              <img src='/public/image 29.svg'></img>
-              <img src='/public/image 28.svg'></img>
+
+            {/* ✅ Correct image usage */}
+            <div className="mt-6 flex space-x-3 justify-center">
+              <img src={image29} alt="Social 1" className="w-8 h-8" />
+              <img src={image28} alt="Social 2" className="w-8 h-8" />
             </div>
           </div>
         </div>
       </div>
-    
     </div>
   );
 }
