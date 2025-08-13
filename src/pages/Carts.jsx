@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Minus, Plus, Trash2 } from 'lucide-react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Minus, Plus, Trash2 } from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
+  const [processingId, setProcessingId] = useState(null);
   const navigate = useNavigate();
 
-  // Load cart from localStorage
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     setCartItems(storedCart);
@@ -18,7 +18,7 @@ export default function CartPage() {
       removeItem(id);
       return;
     }
-    const updatedCart = cartItems.map(item =>
+    const updatedCart = cartItems.map((item) =>
       item._id === id ? { ...item, quantity: newQuantity } : item
     );
     setCartItems(updatedCart);
@@ -26,51 +26,76 @@ export default function CartPage() {
   };
 
   const removeItem = (id) => {
-    const updatedCart = cartItems.filter(item => item._id !== id);
+    const updatedCart = cartItems.filter((item) => item._id !== id);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
+  const getTotalPrice = () =>
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  // 🛒 Buy Now per product
   const handleBuyNow = async (item) => {
     try {
+      setProcessingId(item._id);
+      
       const orderData = {
         products: [
           {
             productId: item._id,
-            quantity: item.quantity
-          }
-        ]
+            title: item.title,
+            price: item.price,
+            image: item.image,
+            quantity: item.quantity,
+          },
+        ],
       };
 
-      const response = await axios.post(
-        "http://localhost:2000/api/orders/create-order",
+
+      const response = await axios.post("http://localhost:2000/api/orders/create",
         orderData,
-        { withCredentials: true }
+        {
+          headers: { 
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true // This ensures cookies are sent
+        }
       );
 
-      alert(response.data.message);
+      console.log("✅ Order Created:", response.data);
+      alert("Order placed successfully!");
 
-      // ✅ Add this item to Wishlist
+      // Save to wishlist
       const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
       wishlist.push(item);
       localStorage.setItem("wishlist", JSON.stringify(wishlist));
 
-      // ✅ Remove item from cart
-      const updatedCart = cartItems.filter(cartItem => cartItem._id !== item._id);
+      // Remove from cart
+      const updatedCart = cartItems.filter(
+        (cartItem) => cartItem._id !== item._id
+      );
       setCartItems(updatedCart);
       localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-      // ✅ Redirect to Wishlist
       navigate("/wishlist");
-
     } catch (error) {
-      console.error(error);
-      alert("Failed to place order");
+         console.error("- Status:", error.response?.status);
+  
+      
+      // More specific error messages
+      if (error.response?.status === 401) {
+        alert("Authentication failed. Please login again.");
+        // Clear cookies by setting them to expire
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        // navigate("/login"); // Uncomment if you have login route
+      } else if (error.response?.status === 403) {
+        alert("Token expired. Please login again.");
+        document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        // navigate("/login");
+      } else {
+        alert(error.response?.data?.message || "Failed to place order");
+      }
+    } finally {
+      setProcessingId(null);
     }
   };
 
@@ -95,22 +120,29 @@ export default function CartPage() {
           {cartItems.length === 0 ? (
             <div className="p-8 text-center text-gray-500">Your cart is empty</div>
           ) : (
-            cartItems.map(item => (
-              <div key={item._id} className="grid grid-cols-7 gap-4 p-4 border-b border-gray-200 items-center">
+            cartItems.map((item) => (
+              <div
+                key={item._id}
+                className="grid grid-cols-7 gap-4 p-4 border-b border-gray-200 items-center"
+              >
                 <div>
-                  <img src={item.image} alt={item.title} className="w-16 h-16 object-cover rounded-md" />
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-16 h-16 object-cover rounded-md"
+                  />
                 </div>
                 <div className="font-medium text-gray-800">{item.title}</div>
                 <div className="text-gray-600">${item.price}</div>
                 <div className="flex items-center space-x-2">
-                  <button 
+                  <button
                     onClick={() => updateQuantity(item._id, item.quantity - 1)}
                     className="w-8 h-8 flex items-center justify-center bg-red-100 text-red-600 rounded-full hover:bg-red-200"
                   >
                     <Minus size={16} />
                   </button>
                   <span className="w-8 text-center font-medium">{item.quantity}</span>
-                  <button 
+                  <button
                     onClick={() => updateQuantity(item._id, item.quantity + 1)}
                     className="w-8 h-8 flex items-center justify-center bg-green-100 text-green-600 rounded-full hover:bg-green-200"
                   >
@@ -118,7 +150,7 @@ export default function CartPage() {
                   </button>
                 </div>
                 <div>
-                  <button 
+                  <button
                     onClick={() => removeItem(item._id)}
                     className="p-2 text-red-500 hover:bg-red-50 rounded-full"
                   >
@@ -132,8 +164,9 @@ export default function CartPage() {
                   <button
                     onClick={() => handleBuyNow(item)}
                     className="px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700"
+                    disabled={processingId === item._id}
                   >
-                    Buy Now
+                    {processingId === item._id ? "Processing..." : "Buy Now"}
                   </button>
                 </div>
               </div>
@@ -141,7 +174,7 @@ export default function CartPage() {
           )}
         </div>
 
-        {/* Footer - Only shows total */}
+        {/* Footer */}
         {cartItems.length > 0 && (
           <div className="bg-gray-50 p-4 flex justify-end">
             <div className="text-lg font-bold text-gray-800">

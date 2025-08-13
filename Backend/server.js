@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 const app = express()
+import dotenv from "dotenv";
+dotenv.config();
 
 app.use(cors({
   origin: 'http://localhost:5173',
