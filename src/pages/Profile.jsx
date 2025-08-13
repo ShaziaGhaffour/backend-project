@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Calendar, Award, Briefcase, GraduationCap, Heart, MessageCircle, Share2, Edit } from 'lucide-react';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  Award,
+  Briefcase,
+  GraduationCap,
+  Heart,
+  MessageCircle,
+  Share2,
+  Edit,
+} from 'lucide-react';
 
 export default function Profile() {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -8,15 +20,33 @@ export default function Profile() {
   const stats = [
     { label: 'Posts', value: '127' },
     { label: 'Followers', value: '2.3K' },
-    { label: 'Following', value: '456' }
+    { label: 'Following', value: '456' },
   ];
 
   const skills = ['React', 'JavaScript', 'Node.js', 'Express', 'UI/UX Design', 'MongoDB'];
-  
+
   const posts = [
-    { id: 1, content: 'Just completed a new project using React and Tailwind CSS! Excited to share it with everyone.', likes: 45, comments: 12, time: '2 hours ago' },
-    { id: 2, content: 'Learning new technologies every day. Currently exploring AI and machine learning concepts.', likes: 67, comments: 8, time: '1 day ago' },
-    { id: 3, content: 'Beautiful sunset from my morning walk. Nature always inspires creativity! 🌅', likes: 89, comments: 23, time: '3 days ago' }
+    {
+      id: 1,
+      content: 'Just completed a new project using React and Tailwind CSS! Excited to share it with everyone.',
+      likes: 45,
+      comments: 12,
+      time: '2 hours ago',
+    },
+    {
+      id: 2,
+      content: 'Learning new technologies every day. Currently exploring AI and machine learning concepts.',
+      likes: 67,
+      comments: 8,
+      time: '1 day ago',
+    },
+    {
+      id: 3,
+      content: 'Beautiful sunset from my morning walk. Nature always inspires creativity! 🌅',
+      likes: 89,
+      comments: 23,
+      time: '3 days ago',
+    },
   ];
 
   return (
@@ -36,17 +66,22 @@ export default function Profile() {
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Left Panel */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
               <div className="text-center mb-6">
                 <div className="relative inline-block">
-                    <img src='/public/imagessss.png'></img>
+                  {/* ✅ Fixed Image Path */}
+                  <img src="/imagessss.png" alt="Profile" className="w-32 h-32 rounded-full mx-auto" />
                   <div className="absolute bottom-4 right-0 w-6 h-6 bg-green-500 rounded-full border-2 border-white"></div>
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800">Shazia Ghaffour</h2>
                 <p className="text-purple-600 font-medium">Full Stack Developer</p>
-                <p className="text-gray-500 text-sm mt-2">Passionate about creating amazing web experiences</p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Passionate about creating amazing web experiences
+                </p>
               </div>
+
               <div className="grid grid-cols-3 gap-4 mb-6 text-center">
                 {stats.map((stat, index) => (
                   <div key={index} className="py-3">
@@ -55,12 +90,13 @@ export default function Profile() {
                   </div>
                 ))}
               </div>
+
               <div className="flex gap-3 mb-6">
-                <button 
+                <button
                   onClick={() => setIsFollowing(!isFollowing)}
                   className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-                    isFollowing 
-                      ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' 
+                    isFollowing
+                      ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       : 'bg-purple-600 text-white hover:bg-purple-700'
                   }`}
                 >
@@ -94,6 +130,8 @@ export default function Profile() {
                 </div>
               </div>
             </div>
+
+            {/* Skills */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <Award size={20} />
@@ -101,7 +139,7 @@ export default function Profile() {
               </h3>
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill, index) => (
-                  <span 
+                  <span
                     key={index}
                     className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
                   >
@@ -112,9 +150,8 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Right Content Area */}
+          {/* Right Panel */}
           <div className="lg:col-span-2">
-            {/* Tabs */}
             <div className="bg-white rounded-2xl shadow-lg mb-6">
               <div className="flex border-b border-gray-200">
                 {['about', 'posts', 'experience'].map((tab) => (
@@ -139,18 +176,28 @@ export default function Profile() {
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-3">About Me</h3>
                       <p className="text-gray-600 leading-relaxed">
-                        I'm a passionate Full Stack Developer with over 3 years of experience in creating 
-                        modern web applications. I love working with React, Node.js, and exploring new 
-                        technologies. When I'm not coding, you can find me reading tech blogs, playing 
+                        I'm a passionate Full Stack Developer with over 3 years of experience in creating
+                        modern web applications. I love working with React, Node.js, and exploring new
+                        technologies. When I'm not coding, you can find me reading tech blogs, playing
                         cricket, or exploring the beautiful landscapes of Pakistan.
                       </p>
                     </div>
-                    
+
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-3">Interests</h3>
                       <div className="flex flex-wrap gap-2">
-                        {['Web Development', 'Novel Writing', 'Photography', 'Cocking', 'Traveling', 'Reading'].map((interest, index) => (
-                          <span key={index} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                        {[
+                          'Web Development',
+                          'Novel Writing',
+                          'Photography',
+                          'Cocking',
+                          'Traveling',
+                          'Reading',
+                        ].map((interest, index) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+                          >
                             {interest}
                           </span>
                         ))}
@@ -182,6 +229,8 @@ export default function Profile() {
                     ))}
                   </div>
                 )}
+
+                {/* Experience Tab */}
                 {activeTab === 'experience' && (
                   <div className="space-y-6">
                     <div className="flex items-start gap-4">
@@ -193,7 +242,8 @@ export default function Profile() {
                         <p className="text-purple-600 font-medium">TechCorp Solutions</p>
                         <p className="text-gray-500 text-sm">2022 - Present</p>
                         <p className="text-gray-600 mt-2">
-                          Leading frontend development for multiple client projects using React, Next.js, and modern CSS frameworks.
+                          Leading frontend development for multiple client projects using React, Next.js,
+                          and modern CSS frameworks.
                         </p>
                       </div>
                     </div>
@@ -207,7 +257,8 @@ export default function Profile() {
                         <p className="text-blue-600 font-medium">Digital Innovations</p>
                         <p className="text-gray-500 text-sm">2021 - 2022</p>
                         <p className="text-gray-600 mt-2">
-                          Developed and maintained web applications using MERN stack, collaborated with design teams.
+                          Developed and maintained web applications using MERN stack, collaborated with
+                          design teams.
                         </p>
                       </div>
                     </div>
@@ -221,7 +272,8 @@ export default function Profile() {
                         <p className="text-green-600 font-medium">University of Punjab</p>
                         <p className="text-gray-500 text-sm">2020 - 2024</p>
                         <p className="text-gray-600 mt-2">
-                          Graduated with distinction, specialized in Software Engineering and Web Technologies.
+                          Graduated with distinction, specialized in Software Engineering and Web
+                          Technologies.
                         </p>
                       </div>
                     </div>
