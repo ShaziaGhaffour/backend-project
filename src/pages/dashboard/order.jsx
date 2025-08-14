@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import API from '../../api.js';  // yahan se axios instance import ho raha hai
+import axios from "axios";
+import API from '../../api.js';  
 
 const OrderPage = () => {
   const [orders, setOrders] = useState([]);
@@ -8,13 +9,14 @@ const OrderPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await API.get("/api/orders"); // API instance use karo
+        const res = await axios.get("/api/orders");
 
+        // Safely ensure that response is an array
         const fetchedOrders = Array.isArray(res.data) ? res.data : [];
         setOrders(fetchedOrders);
       } catch (error) {
         console.error("Error fetching orders", error);
-        setOrders([]);
+        setOrders([]); // fallback to empty array on error
       } finally {
         setLoading(false);
       }
@@ -23,8 +25,13 @@ const OrderPage = () => {
     fetchOrders();
   }, []);
 
-  if (loading) return <p>Loading orders...</p>;
-  if (!orders.length) return <p>No orders found</p>;
+  if (loading) {
+    return <p>Loading orders...</p>;
+  }
+
+  if (!Array.isArray(orders) || orders.length === 0) {
+    return <p>No orders found</p>;
+  }
 
   return (
     <div>
