@@ -78,7 +78,7 @@ const app = express();
 // Allowed origins
 const allowedOrigins = [
   "http://localhost:5173",               // local frontend
-  "https://backend-project-dotl.vercel.app"  // deployed frontend
+  "https://tumhara-frontend.vercel.app"  // deployed frontend
 ];
 // ✅ Dynamic CORS handling
 app.use(cors({
