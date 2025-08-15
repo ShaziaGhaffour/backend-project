@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import API from '../../api.js';  
 
 const OrderPage = () => {
@@ -9,14 +8,18 @@ const OrderPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const res = await axios.get("/api/orders");
+        const token = localStorage.getItem("token"); // token get from storage
+        const res = await API.get("/api/orders", {
+          headers: {
+            Authorization: `Bearer ${token}` // send token
+          }
+        });
 
-        // Safely ensure that response is an array
         const fetchedOrders = Array.isArray(res.data) ? res.data : [];
         setOrders(fetchedOrders);
       } catch (error) {
         console.error("Error fetching orders", error);
-        setOrders([]); // fallback to empty array on error
+        setOrders([]);
       } finally {
         setLoading(false);
       }
@@ -25,33 +28,22 @@ const OrderPage = () => {
     fetchOrders();
   }, []);
 
-  if (loading) {
-    return <p>Loading orders...</p>;
-  }
-
-  if (!Array.isArray(orders) || orders.length === 0) {
-    return <p>No orders found</p>;
-  }
+  if (loading) return <p>Loading orders...</p>;
+  if (!orders.length) return <p>No orders found</p>;
 
   return (
     <div>
       <h1>Orders</h1>
       {orders.map((order) => (
-        <div
-          key={order._id || Math.random()}
-          style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}
-        >
-          <p><strong>Order ID:</strong> {order._id || "N/A"}</p>
+        <div key={order._id} style={{ border: "1px solid #ccc", margin: "10px", padding: "10px" }}>
+          <p><strong>Order ID:</strong> {order._id}</p>
           <p><strong>User:</strong> {order.user?.name || "Unknown"}</p>
-          <p><strong>Total:</strong> {order.total ?? "N/A"}</p>
-
+          <p><strong>Total:</strong> {order.total}</p>
           <h4>Products:</h4>
           <ul>
-            {Array.isArray(order.products) && order.products.length > 0 ? (
+            {order.products?.length ? (
               order.products.map((product) => (
-                <li key={product._id || Math.random()}>
-                  {product.name} - {product.quantity}
-                </li>
+                <li key={product._id}>{product.name} - {product.quantity}</li>
               ))
             ) : (
               <li>No products</li>
