@@ -23,50 +23,34 @@ export const signup = async (req, res) => {
   }
 };
 
-// export const login = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     if (!email || !password) {
-//       return res.status(400).json({ message: "Email and Password are required" });
-//     }
-//     const findUser = await User.findOne({ email });
-//     if (!findUser) {
-//       return res.status(404).json({ message: "User not found" });
-//     }
-//     if (findUser.password !== password) {
-//       return res.status(401).json({ message: "Invalid password" });
-//     }
-//     const token = await setUser(findUser);
-//     await res.cookie('token', token,{
-//       httpOnly:true,
-//       secure:true
-//     });
-//     return res.status(200).json({
-//       message: "Login successful"
-//     });
-
-//   } catch (error) {
-//     console.error("Login error:", error);
-//     return res.status(500).json({ message: "Internal Server Error" });
-//   }
-// };
 export const login = async (req, res) => {
+  try {
     const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-    if (!user || !(await user.matchPassword(password))) {
-        return res.status(400).json({ message: "Invalid credentials" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and Password are required" });
     }
-
-    // ✅ Set token in cookie and send in response
-    const token = setUser(user, res);
-
-    res.status(200).json({
-        message: "Login successful",
-        token, // frontend can also store it in localStorage
-        user
+    const findUser = await User.findOne({ email });
+    if (!findUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (findUser.password !== password) {
+      return res.status(401).json({ message: "Invalid password" });
+    }
+    const token = await setUser(findUser);
+    await res.cookie('token', token,{
+      httpOnly:true,
+      secure:true
     });
+    return res.status(200).json({
+      message: "Login successful"
+    });
+
+  } catch (error) {
+    console.error("Login error:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 };
+
 
 export const getAllUsers = async (req, res) => {
   try {
