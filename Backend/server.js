@@ -34,8 +34,6 @@ app.use(cors({
 
 app.use(express.json());
 app.use(cookieParser());
-
-// MongoDB connection
 mongoose.connect("mongodb://localhost:27017/backend", {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -46,8 +44,6 @@ mongoose.connect("mongodb://localhost:27017/backend", {
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err.message);
   });
-
-// Test route
 app.get("/", (req, res) => {
   res.status(200).send("Backend is running successfully");
 });
@@ -56,8 +52,6 @@ app.get("/", (req, res) => {
 app.use("/api/users", userRoute);
 app.use("/api/products", productRoute);
 app.use("/api/orders", orderRoute);
-
-// Start server
 const PORT = 2000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
