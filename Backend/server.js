@@ -75,12 +75,11 @@ import orderRoute from "./Routes/orderRoutes.js";
 dotenv.config();
 const app = express();
 
-// Allowed origins
 const allowedOrigins = [
-  "http://localhost:5173",               // local frontend
-  "https://tumhara-frontend.vercel.app"  // deployed frontend
+  "http://localhost:5173",
+  "https://tumhara-frontend.vercel.app",
+  "https://backend-project-beige.vercel.app" // ✅ This is the one showing the CORS error
 ];
-// ✅ Dynamic CORS handling
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
