@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import Product from '../models/Product.js';
 import { setUser } from "../Utils/auth.js";
+// import bcrypt from 'bcryptjs';
 
 export const signup = async (req, res) => {
   try {
