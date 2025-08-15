@@ -107,15 +107,21 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      // ✅ API instance ka use
+      // ✅ API call
       const response = await API.post(
         "/api/users/login",
         { email, password },
         { withCredentials: true }
       );
 
-      toast(response?.data?.message);
-      navigate("/login");
+      // ✅ Token storage
+      if (response?.data?.token) {
+        localStorage.setItem("token", response.data.token);
+        toast.success("Login successful!");
+        navigate("/"); // Home or dashboard page
+      } else {
+        toast.error("Token not found in response");
+      }
 
     } catch (error) {
       console.error("Login error:", error);
@@ -133,7 +139,7 @@ export default function Login() {
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-8">
-          <div className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
@@ -142,6 +148,7 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
+                required
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50"
               />
             </div>
@@ -154,12 +161,13 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter Your Password"
+                required
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50"
               />
             </div>
 
             <button
-              onClick={handleSubmit}
+              type="submit"
               className="w-full bg-teal-600 text-white py-3 px-4 rounded-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 font-medium transition-colors"
               disabled={loading}
             >
@@ -171,7 +179,7 @@ export default function Login() {
                 Forgot Your Password?
               </Link>
             </div>
-          </div>
+          </form>
 
           <div className="mt-8 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500 leading-relaxed">
@@ -190,4 +198,3 @@ export default function Login() {
     </div>
   );
 }
-
